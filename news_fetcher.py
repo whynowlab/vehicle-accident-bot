@@ -25,6 +25,15 @@ def generate_news_id(title: str, link: str) -> str:
     return hashlib.md5(content.encode()).hexdigest()[:16]
 
 
+def get_real_url(google_url: str) -> str:
+    """Google News 링크를 실제 뉴스 사이트 링크로 변환"""
+    try:
+        response = requests.head(google_url, allow_redirects=True, timeout=5)
+        return response.url
+    except:
+        return google_url
+
+
 def check_priority(text: str, high_keywords: List[str]) -> str:
     for keyword in high_keywords:
         if keyword in text:
@@ -64,7 +73,8 @@ def fetch_google_news(keyword: str, high_keywords: List[str]) -> List[NewsItem]:
         
         for entry in feed.entries[:8]:
             title = entry.get('title', '')
-            link = entry.get('link', '')
+            google_link = entry.get('link', '')
+            link = get_real_url(google_link)  # 실제 링크로 변환
             published = entry.get('published', '')[:16] if entry.get('published') else datetime.now().strftime("%Y-%m-%d")
             source = entry.get('source', {}).get('title', '')
             
