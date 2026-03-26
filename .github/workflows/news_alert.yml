@@ -2,7 +2,7 @@ name: 차량사고 뉴스 알림
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 23,3,7,11 * * *'
   workflow_dispatch:
 
 permissions:
